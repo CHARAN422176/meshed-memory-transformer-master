@@ -1,7 +1,8 @@
 import random
 from data import ImageDetectionsField, TextField, RawField
 # from data import COCO, DataLoader
-from data import IUXray, DataLoader
+from data import DataLoader
+from data.dataset import IUXray
 import evaluation
 from evaluation import PTBTokenizer, Cider
 from models.transformer import Transformer, MemoryAugmentedEncoder, MeshedDecoder, ScaledDotProductAttentionMemory
