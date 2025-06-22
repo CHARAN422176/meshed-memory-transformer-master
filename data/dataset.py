@@ -282,7 +282,7 @@ class IUXray(PairedDataset):
     def __init__(self, image_field, text_field, img_root, ann_file, split_ratio=(0.7, 0.15, 0.15), seed=42):
         # Load full annotation JSON
         with open(ann_file, 'r') as f:
-            annotations = json.load(f)['annotations']
+            annotations = json.load(f)['annotation']
 
         # Extract (image, caption) pairs
         examples = [Example.fromdict({
