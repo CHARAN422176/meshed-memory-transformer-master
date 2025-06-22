@@ -10,7 +10,7 @@ import os
 import warnings
 import shutil
 
-from .dataset import Dataset
+from .datasetOld import Dataset
 from .vocab import Vocab
 from .utils import get_tokenizer
 

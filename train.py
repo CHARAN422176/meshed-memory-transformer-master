@@ -1,6 +1,7 @@
 import random
 from data import ImageDetectionsField, TextField, RawField
-from data import COCO, DataLoader
+# from data import COCO, DataLoader
+from data import IUXray, DataLoader
 import evaluation
 from evaluation import PTBTokenizer, Cider
 from models.transformer import Transformer, MemoryAugmentedEncoder, MeshedDecoder, ScaledDotProductAttentionMemory
@@ -165,7 +166,8 @@ if __name__ == '__main__':
                            remove_punctuation=True, nopoints=False)
 
     # Create the dataset
-    dataset = COCO(image_field, text_field, 'coco/images/', args.annotation_folder, args.annotation_folder)
+    # dataset = COCO(image_field, text_field, 'coco/images/', args.annotation_folder, args.annotation_folder)
+    dataset = IUXray(image_field, text_field, args.features_path, args.annotation_folder)
     train_dataset, val_dataset, test_dataset = dataset.splits
 
     if not os.path.isfile('vocab_%s.pkl' % args.exp_name):
