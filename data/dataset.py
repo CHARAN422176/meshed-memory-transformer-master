@@ -5,7 +5,7 @@ import collections
 import torch
 from .example import Example
 from .utils import nostdout
-from pycocotools.coco import COCO as pyCOCO
+# from pycocotools.coco import COCO as pyCOCO
 
 
 class Dataset(object):
