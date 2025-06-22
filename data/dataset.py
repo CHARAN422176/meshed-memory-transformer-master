@@ -279,35 +279,34 @@ class COCO(PairedDataset):
         return train_samples, val_samples, test_samples
 
 class IUXray(PairedDataset):
-    def __init__(self, image_field, text_field, img_root, ann_file, split_ratio=(0.7, 0.15, 0.15), seed=42):
-        # Load full annotation JSON
+    def __init__(self, image_field, text_field, img_root, ann_file):
         with open(ann_file, 'r') as f:
-            annotations = json.load(f)['annotation']
+            data = json.load(f)['root']
 
-        # Extract (image, caption) pairs
-        examples = [Example.fromdict({
-            'image': os.path.join(img_root, ann['image_id']),
-            'text': ann['caption']
-        }) for ann in annotations]
-
-        # Shuffle and split
-        import random
-        random.seed(seed)
-        random.shuffle(examples)
-        total = len(examples)
-        train_end = int(split_ratio[0] * total)
-        val_end = train_end + int(split_ratio[1] * total)
-
-        self.train_examples = examples[:train_end]
-        self.val_examples = examples[train_end:val_end]
-        self.test_examples = examples[val_end:]
+        self.train_examples = self._build_examples(data['train'], img_root)
+        self.val_examples = self._build_examples(data['valid'], img_root)
+        self.test_examples = self._build_examples(data['test'], img_root)
 
         all_examples = self.train_examples + self.val_examples + self.test_examples
-        super(IUXray, self).__init__(all_examples, {'image': image_field, 'text': text_field})
+        super().__init__(all_examples, {'image': image_field, 'text': text_field})
+
+    def _build_examples(self, split_data, img_root):
+        examples = []
+        for item in split_data:
+            image_paths = [os.path.join(img_root, p) for p in item['image_path']]
+            report = item['report']
+
+            # Join multi-view image paths with || to handle both views in one string
+            examples.append(Example.fromdict({
+                'image': '||'.join(image_paths),
+                'text': report
+            }))
+        return examples
 
     @property
     def splits(self):
-        train = PairedDataset(self.train_examples, self.fields)
-        val = PairedDataset(self.val_examples, self.fields)
-        test = PairedDataset(self.test_examples, self.fields)
-        return train, val, test
+        return (
+            PairedDataset(self.train_examples, self.fields),
+            PairedDataset(self.val_examples, self.fields),
+            PairedDataset(self.test_examples, self.fields)
+        )
